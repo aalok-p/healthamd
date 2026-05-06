@@ -72,17 +72,17 @@ export default function Home() {
               Precision <br />
               Nutrition.
             </h1>
-            <p className="text-lg text-white/40 mb-12 leading-relaxed max-w-md font-medium">
+            <p className="text-lg text-white/60 mb-12 leading-relaxed max-w-md font-medium">
               Autonomous agent for health optimization. Real-time analysis and procurement. 
             </p>
             
-            <div className="flex flex-wrap gap-6 mb-12 border-l border-white/20 pl-6">
+            <div className="flex flex-wrap gap-6 mb-12 border-l border-white/40 pl-6">
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-widest text-white/30">Target</span>
+                <span className="text-[10px] uppercase tracking-widest text-white/50">Target</span>
                 <span className="text-sm font-bold uppercase">Macro Precision</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-widest text-white/30">Status</span>
+                <span className="text-[10px] uppercase tracking-widest text-white/50">Status</span>
                 <span className="text-sm font-bold uppercase">Ready</span>
               </div>
             </div>
@@ -94,14 +94,14 @@ export default function Home() {
             transition={{ duration: 1.5, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative aspect-square grayscale contrast-125 brightness-75 rounded-sm overflow-hidden border border-white/10 group">
+            <div className="relative aspect-square grayscale contrast-125 brightness-100 rounded-sm overflow-hidden border border-white/20 group">
               <Image 
                 src="/hero.png" 
                 alt="Health Interface" 
                 fill
                 className="object-cover transition-transform duration-1000 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-black/40 mix-blend-overlay"></div>
+              <div className="absolute inset-0 bg-black/20 mix-blend-overlay"></div>
             </div>
           </motion.div>
         </div>
@@ -111,12 +111,12 @@ export default function Home() {
       <section className="py-20 px-6 relative">
         <div className="max-w-5xl mx-auto relative">
           <div className="flex items-center gap-4 mb-12">
-            <div className="h-[1px] flex-1 bg-white/10"></div>
-            <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/30">Command Interface</h2>
-            <div className="h-[1px] flex-1 bg-white/10"></div>
+            <div className="h-[1px] flex-1 bg-white/20"></div>
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60">Command Interface</h2>
+            <div className="h-[1px] flex-1 bg-white/20"></div>
           </div>
 
-          <div className="relative bg-white/[0.02] border border-white/10 p-2 rounded-sm focus-within:border-white/40 transition-colors">
+          <div className="relative bg-white/[0.05] border border-white/20 p-2 rounded-sm focus-within:border-white/60 transition-colors">
             <div className="flex items-center gap-4">
               <input
                 type="text"
@@ -124,7 +124,7 @@ export default function Home() {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleChat()}
                 placeholder="INPUT COMMAND..."
-                className="flex-1 bg-transparent border-none outline-none text-xl text-white placeholder:text-white/10 px-6 py-4 uppercase font-bold tracking-tight"
+                className="flex-1 bg-transparent border-none outline-none text-xl text-white placeholder:text-white/20 px-6 py-4 uppercase font-bold tracking-tight"
               />
               <button
                 onClick={handleChat}
@@ -141,17 +141,17 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mt-12 border border-white/10 bg-white/[0.01]"
+                className="mt-12 border border-white/20 bg-white/[0.02]"
               >
-                <div className="border-b border-white/10 px-8 py-3 flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Response Data</span>
+                <div className="border-b border-white/20 px-8 py-3 flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Response Data</span>
                   <div className="flex gap-1">
-                    <div className="w-1 h-1 bg-white/40"></div>
-                    <div className="w-1 h-1 bg-white/40"></div>
+                    <div className="w-1.5 h-1.5 bg-white/60"></div>
+                    <div className="w-1.5 h-1.5 bg-white/60"></div>
                   </div>
                 </div>
                 <div className="p-12">
-                  <p className="text-white/80 text-xl leading-relaxed font-light tracking-tight whitespace-pre-wrap">
+                  <p className="text-white text-xl leading-relaxed font-light tracking-tight whitespace-pre-wrap">
                     {response}
                   </p>
                 </div>
@@ -170,7 +170,7 @@ export default function Home() {
               <button
                 key={chip}
                 onClick={() => setQuery(chip)}
-                className="py-4 border border-white/5 text-[10px] font-bold tracking-[0.2em] text-white/20 hover:border-white/40 hover:text-white transition-all uppercase"
+                className="py-4 border border-white/10 text-[10px] font-bold tracking-[0.2em] text-white/50 hover:border-white/60 hover:text-white transition-all uppercase bg-white/[0.02]"
               >
                 {chip}
               </button>
