@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from .config import get_settings
-from .database import get_supabase
-from .agents.orchestrator import HealthAgent
-from .utils.cloud_security import RateLimitMiddleware, google_cloud_logger
+from config import get_settings
+from database import get_supabase
+from agents.orchestrator import HealthAgent
+from utils.cloud_security import RateLimitMiddleware, google_cloud_logger
 from pydantic import BaseModel, constr
 
 app = FastAPI(title="Health.AMD Protocol")

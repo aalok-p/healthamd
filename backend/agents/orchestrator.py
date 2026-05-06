@@ -1,9 +1,9 @@
 import json
 from openai import OpenAI
 from typing import List, Dict, Any
-from ..config import get_settings
-from ..mcp.client import MockSwiggyMCP
-from ..mcp.tools import tools
+from config import get_settings
+from mcp.client import MockSwiggyMCP
+from mcp.tools import tools
 
 class HealthAgent:
     def __init__(self):
