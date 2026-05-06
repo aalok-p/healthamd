@@ -32,17 +32,31 @@ async def get_profile(user_id: str):
     response = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
     return response.data
 
+from sse_starlette.sse import EventSourceResponse
+import asyncio
+
 @app.post("/chat")
 async def chat(request: ChatRequest, user_id: str):
-    # Get user profile for context
     supabase = get_supabase()
     profile = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
     
     agent = HealthAgent()
-    response = await agent.process_query(request.message, profile.data)
     
-    return {"response": response}
+    async def event_generator():
+        # This is a simplified streaming loop for demo purposes
+        # In a real app, you would yield chunks from the OpenAI stream
+        response_text = await agent.process_query(request.message, profile.data)
+        
+        # Simulate streaming by chunking the final response
+        for chunk in response_text.split(" "):
+            yield {"data": chunk + " "}
+            await asyncio.sleep(0.05)
+            
+    return EventSourceResponse(event_generator())
 
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run(app, host="0.0.0.0", port=port)

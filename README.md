@@ -33,7 +33,7 @@ Persistency is handled via a PostgreSQL backend on Supabase with Row Level Secur
 ### Backend (FastAPI)
 A modular Python 3.12 architecture focused on performance and scalability.
 - **Location**: `backend/`
-- **Execution**: `uvicorn main:app --port 8000`
+- **Execution**: `uvicorn backend.main:app --port 8000`
 - **Dependencies**: Fixed versioning to resolve `httpx` and `supabase-py` conflicts.
 
 ### Frontend (Next.js)

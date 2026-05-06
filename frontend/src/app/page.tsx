@@ -29,8 +29,19 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: query }),
       });
-      const data = await res.json();
-      setResponse(data.response);
+      
+      const reader = res.body?.getReader();
+      if (!reader) return;
+
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        // SSE format is "data: content\n\n"
+        const content = chunk.replace(/data: /g, "").replace(/\n\n/g, "");
+        setResponse((prev) => prev + content);
+      }
     } catch (error) {
       console.error(error);
       setResponse("System error: Unable to reach processing unit. Ensure backend is active.");

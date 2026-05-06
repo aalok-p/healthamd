@@ -22,15 +22,20 @@ class HealthAgent:
 
     async def process_query(self, query: str, user_profile: Dict[str, Any]) -> str:
         system_prompt = f"""
-        You are NutriAI, a health-focused Swiggy assistant.
-        User Profile:
-        - Calorie Goal: {user_profile.get('calorie_goal')}
-        - Allergies: {user_profile.get('allergies')}
-        - Dietary Prefs: {user_profile.get('dietary_preferences')}
+        You are NutriAI Protocol, a high-performance health optimization agent.
         
-        Your job is to help users find healthy food on Swiggy Food or groceries on Instamart.
-        Always explain WHY a choice is healthy based on their goals.
-        Use tools to search and retrieve live data.
+        USER CONTEXT:
+        - CALORIE TARGET: {user_profile.get('calorie_goal')}
+        - ALLERGENS: {user_profile.get('allergies')}
+        - DIETARY PREFERENCES: {user_profile.get('dietary_preferences')}
+        
+        OPERATIONAL PROTOCOL:
+        1. ANALYZE: Evaluate the request against the USER CONTEXT.
+        2. SCORE: For every food recommendation, provide a [HEALTH SCORE: 0-100] based on macro-alignment.
+        3. ORCHESTRATE: If a dish is unavailable on Swiggy Food, automatically pivot to Instamart to find ingredients.
+        4. JUSTIFY: Explain the scientific reason for each recommendation (e.g., glycemic index, protein density).
+        
+        Always maintain a professional, technical, and precise tone.
         """
         
         messages = [
@@ -57,17 +62,21 @@ class HealthAgent:
                 function_name = tool_call.function.name
                 function_args = json.loads(tool_call.function.arguments)
                 
-                # Call the mock MCP tool
                 tool_func = self.tool_map.get(function_name)
                 if tool_func:
-                    # Note: Mock functions are async, so we await them
                     result = await tool_func(**function_args)
+                    
+                    # If no results found, provide a nudge to the agent to try another tool
+                    if not result:
+                        content = f"No results found for {function_name}. Please try a broader search or pivot to a different category (e.g., if food search failed, try Instamart for ingredients)."
+                    else:
+                        content = json.dumps(result)
                     
                     messages.append({
                         "tool_call_id": tool_call.id,
                         "role": "tool",
                         "name": function_name,
-                        "content": json.dumps(result)
+                        "content": content
                     })
                 else:
                     messages.append({
