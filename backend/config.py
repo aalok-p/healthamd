@@ -5,7 +5,9 @@ class Settings(BaseSettings):
     supabase_url: str = "https://your-project.supabase.co"
     supabase_anon_key: str = "your-anon-key"
     supabase_service_role_key: str = "your-service-role"
-    gemini_api_key: str = ""
+    oxlo_api_key: str = ""
+    oxlo_base_url: str = "https://api.oxlo.ai/v1"
+    oxlo_model: str = "ministral-14b"
     use_mock_mcp: bool = True
     swiggy_client_id: str = ""
     swiggy_client_secret: str = ""

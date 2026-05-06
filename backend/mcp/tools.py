@@ -31,48 +31,53 @@ class BookTable(BaseModel):
     party_size: int
     booking_time: str
 
-# --- Tool Definitions for Gemini ---
+# --- Tool Definitions for OpenAI / Oxlo ---
 
 tools = [
     {
-        "function_declarations": [
-            {
-                "name": "food_search_restaurants",
-                "description": "Search for restaurants nearby on Swiggy Food",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "Cuisine or restaurant name"},
-                        "lat": {"type": "number"},
-                        "lng": {"type": "number"}
-                    },
-                    "required": ["query", "lat", "lng"]
-                }
-            },
-            {
-                "name": "food_get_menu",
-                "description": "Get the full menu of a specific restaurant",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "restaurant_id": {"type": "string"}
-                    },
-                    "required": ["restaurant_id"]
-                }
-            },
-            {
-                "name": "im_search_grocery",
-                "description": "Search for groceries on Swiggy Instamart",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string"},
-                        "lat": {"type": "number"},
-                        "lng": {"type": "number"}
-                    },
-                    "required": ["query", "lat", "lng"]
-                }
+        "type": "function",
+        "function": {
+            "name": "food_search_restaurants",
+            "description": "Search for restaurants nearby on Swiggy Food",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Cuisine or restaurant name"},
+                    "lat": {"type": "number"},
+                    "lng": {"type": "number"}
+                },
+                "required": ["query", "lat", "lng"]
             }
-        ]
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "food_get_menu",
+            "description": "Get the full menu of a specific restaurant",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "restaurant_id": {"type": "string"}
+                },
+                "required": ["restaurant_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "im_search_grocery",
+            "description": "Search for groceries on Swiggy Instamart",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "lat": {"type": "number"},
+                    "lng": {"type": "number"}
+                },
+                "required": ["query", "lat", "lng"]
+            }
+        }
     }
 ]
