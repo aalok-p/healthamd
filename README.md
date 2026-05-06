@@ -1,61 +1,67 @@
-# Health.AMD
+# Health.AMD: Technical Implementation & Protocol
 
-> **Protocol for Precision Nutrition & Autonomous Procurement.**
-
-Health.AMD is a high-performance agentic interface that leverages the **Swiggy MCP** ecosystem and **Oxlo Intelligence** to bridge the gap between nutritional goals and actual food consumption. It doesn't just track; it analyzes, recommends, and facilitates.
+Health.AMD is an agentic nutrition assistant designed to bridge the gap between high-level health goals and real-world food procurement. It utilizes a sophisticated tool-calling loop integrated with the Swiggy MCP (Model Context Protocol) ecosystem.
 
 ---
 
-## 🏗️ Architecture
+## Technical Approach
 
-- **Core**: FastAPI (Python 3.12+)
-- **Intelligence**: Oxlo (Ministral-14b via OpenAI client)
-- **Database**: Supabase (PostgreSQL + RLS)
-- **Interface**: Next.js 14 + Tailwind CSS (Monochromatic / Minimal)
-- **Tooling**: Swiggy MCP (Food, Instamart, Dineout)
+### 1. Agentic Orchestration Layer
+The core of the system is a multi-turn reasoning loop powered by the Oxlo Intelligence engine (Ministral-14b). Unlike simple chat interfaces, Health.AMD implements a manual tool-calling cycle:
+- **Reasoning Phase**: The agent analyzes the user's intent (e.g., "Find high-protein dinner") against their Supabase profile (allergies, macro goals).
+- **Action Phase**: The agent generates specific tool calls based on the Swiggy MCP schema (e.g., `food_search_restaurants`).
+- **Observation Phase**: The system executes these calls against a mock or live Swiggy client and returns the raw data to the agent.
+- **Synthesis Phase**: The agent processes the results to provide a health-scored recommendation.
 
----
+### 2. Tool Mapping & MCP Integration
+The protocol maps 35 distinct tools across three Swiggy domains:
+- **Food**: Restaurant discovery, menu analysis, and order placement.
+- **Instamart**: Grocery search and availability tracking.
+- **Dineout**: Table reservation for goal-aligned dining.
 
-## 🚀 Quick Start
+Each tool is defined using OpenAI-compatible function schemas, ensuring seamless integration with the Ministral-14b model.
 
-### 1. Backend Engine
-```bash
-cd backend
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
-```
-
-### 2. Frontend Interface
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### 3. Database Migration
-Execute `supabase/schema.sql` in your Supabase SQL Editor.
+### 3. Data Persistence (Supabase)
+Persistency is handled via a PostgreSQL backend on Supabase with Row Level Security (RLS) to ensure data isolation:
+- **User Profiles**: Stores granular health data including calorie targets and allergen lists.
+- **Habit Engine**: Logs orders to track streaks and nutritional trends over time.
 
 ---
 
-## 🔑 Environment Configuration
+## Infrastructure
 
-### Backend (`backend/.env`)
-- `OXLO_API_KEY`: Intelligence access key.
-- `OXLO_BASE_URL`: `https://api.oxlo.ai/v1`
-- `SUPABASE_URL` / `SUPABASE_ANON_KEY`: Database connectivity.
+### Backend (FastAPI)
+A modular Python 3.12 architecture focused on performance and scalability.
+- **Location**: `backend/`
+- **Execution**: `uvicorn main:app --port 8000`
+- **Dependencies**: Fixed versioning to resolve `httpx` and `supabase-py` conflicts.
 
-### Frontend (`frontend/.env.local`)
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `NEXT_PUBLIC_BACKEND_URL`: `http://localhost:8000`
+### Frontend (Next.js)
+A high-contrast, monochromatic interface built for speed and clarity.
+- **Location**: `frontend/`
+- **Execution**: `npm run dev`
+- **Styling**: Tailwind CSS with custom glassmorphism and Framer Motion for protocol-level animations.
+
+---
+
+## Environment Configuration
+
+### Backend Connectivity
+- `OXLO_API_KEY`: Intelligence endpoint access.
+- `OXLO_BASE_URL`: https://api.oxlo.ai/v1
+- `OXLO_MODEL`: ministral-14b
+- `SUPABASE_URL`: PostgreSQL connection endpoint.
+- `USE_MOCK_MCP`: Set to true for local development without live Swiggy credentials.
+
+### Frontend Connectivity
+- `NEXT_PUBLIC_BACKEND_URL`: Points to the FastAPI service (default: http://localhost:8000).
+- `NEXT_PUBLIC_SUPABASE_URL`: Public database endpoint.
 
 ---
 
-## 📦 Deployment
-The project is **Cloud Run Ready**.
-- Backend: `backend/Dockerfile`
-- Frontend: `frontend/Dockerfile`
+## Deployment Strategy
+The system is containerized for Google Cloud Run compatibility:
+- **Backend**: Multi-stage Python build listening on dynamic port environment variables.
+- **Frontend**: Optimized Node.js runner for static assets and server-side logic.
 
----
-**Health.AMD** — *Monochromatic / Autonomous / Precision.*
+Health.AMD Protocol — Monochromatic / Autonomous / Precision.
