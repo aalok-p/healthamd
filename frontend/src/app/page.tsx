@@ -1,17 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Send, Zap, Activity, Target, ShieldCheck, ChefHat } from "lucide-react";
+import Image from "next/image";
 
 export default function Home() {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleChat = async () => {
+    if (!query.trim()) return;
     setLoading(true);
+    setResponse("");
     try {
-      // Mock user_id for demo
       const userId = "00000000-0000-0000-0000-000000000000";
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
       const res = await fetch(`${backendUrl}/chat?user_id=${userId}`, {
@@ -23,46 +33,151 @@ export default function Home() {
       setResponse(data.response);
     } catch (error) {
       console.error(error);
-      setResponse("Error connecting to NutriAI Agent.");
+      setResponse("System error: Unable to reach processing unit. Ensure backend is active.");
     }
     setLoading(false);
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-extrabold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-8">
-          NutriAI Assistant
-        </h1>
-        
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 mb-8">
-          <div className="flex gap-4">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="I'm looking for a high-protein vegetarian dinner under 500 calories..."
-              className="flex-1 bg-slate-800/50 border border-slate-700 rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-            />
-            <button
-              onClick={handleChat}
-              disabled={loading}
-              className="bg-emerald-500 hover:bg-emerald-600 px-8 py-4 rounded-2xl font-bold transition-all disabled:opacity-50"
-            >
-              {loading ? "Thinking..." : "Ask Agent"}
+    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black overflow-x-hidden font-sans">
+      {/* Navigation */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-black/90 backdrop-blur-md border-b border-white/10 py-4" : "bg-transparent py-6"}`}>
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
+              <Zap className="text-black w-5 h-5 fill-current" />
+            </div>
+            <span className="text-lg font-bold tracking-tighter uppercase">Health.AMD</span>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+            <a href="#" className="hover:text-white transition-colors">Interface</a>
+            <a href="#" className="hover:text-white transition-colors">Protocol</a>
+            <a href="#" className="hover:text-white transition-colors">Database</a>
+            <button className="bg-white text-black px-6 py-2 rounded-sm hover:bg-gray-200 transition-all duration-300">
+              Access
             </button>
           </div>
         </div>
+      </nav>
 
-        {response && (
-          <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 animate-in fade-in slide-in-from-bottom-4">
-            <h2 className="text-emerald-400 font-bold mb-4">NutriAI Response:</h2>
-            <p className="text-slate-300 leading-relaxed text-lg whitespace-pre-wrap">
-              {response}
+      {/* Hero Section */}
+      <section className="relative pt-40 pb-20 px-6">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-7xl lg:text-8xl font-bold leading-[0.9] mb-10 tracking-tighter uppercase">
+              Precision <br />
+              Nutrition.
+            </h1>
+            <p className="text-lg text-white/40 mb-12 leading-relaxed max-w-md font-medium">
+              Autonomous agent for health optimization. Real-time analysis and procurement. 
             </p>
+            
+            <div className="flex flex-wrap gap-6 mb-12 border-l border-white/20 pl-6">
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] uppercase tracking-widest text-white/30">Target</span>
+                <span className="text-sm font-bold uppercase">Macro Precision</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] uppercase tracking-widest text-white/30">Status</span>
+                <span className="text-sm font-bold uppercase">Ready</span>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="relative aspect-square grayscale contrast-125 brightness-75 rounded-sm overflow-hidden border border-white/10 group">
+              <Image 
+                src="/hero.png" 
+                alt="Health Interface" 
+                fill
+                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/40 mix-blend-overlay"></div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* AI Assistant Section */}
+      <section className="py-20 px-6 relative">
+        <div className="max-w-5xl mx-auto relative">
+          <div className="flex items-center gap-4 mb-12">
+            <div className="h-[1px] flex-1 bg-white/10"></div>
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/30">Command Interface</h2>
+            <div className="h-[1px] flex-1 bg-white/10"></div>
           </div>
-        )}
-      </div>
-    </main>
+
+          <div className="relative bg-white/[0.02] border border-white/10 p-2 rounded-sm focus-within:border-white/40 transition-colors">
+            <div className="flex items-center gap-4">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleChat()}
+                placeholder="INPUT COMMAND..."
+                className="flex-1 bg-transparent border-none outline-none text-xl text-white placeholder:text-white/10 px-6 py-4 uppercase font-bold tracking-tight"
+              />
+              <button
+                onClick={handleChat}
+                disabled={loading}
+                className="bg-white text-black px-10 py-4 font-bold uppercase text-xs tracking-widest hover:bg-gray-200 transition-all disabled:opacity-50"
+              >
+                {loading ? "EXECUTING..." : "EXECUTE"}
+              </button>
+            </div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {response && !loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-12 border border-white/10 bg-white/[0.01]"
+              >
+                <div className="border-b border-white/10 px-8 py-3 flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Response Data</span>
+                  <div className="flex gap-1">
+                    <div className="w-1 h-1 bg-white/40"></div>
+                    <div className="w-1 h-1 bg-white/40"></div>
+                  </div>
+                </div>
+                <div className="p-12">
+                  <p className="text-white/80 text-xl leading-relaxed font-light tracking-tight whitespace-pre-wrap">
+                    {response}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Minimal Suggestions */}
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              "HIGH PROTEIN",
+              "LOW CALORIE",
+              "VEGETARIAN",
+              "RECOVERY"
+            ].map((chip) => (
+              <button
+                key={chip}
+                onClick={() => setQuery(chip)}
+                className="py-4 border border-white/5 text-[10px] font-bold tracking-[0.2em] text-white/20 hover:border-white/40 hover:text-white transition-all uppercase"
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
