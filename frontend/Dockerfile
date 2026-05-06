@@ -1,23 +1,38 @@
-# Use Node.js for building
-FROM node:18-alpine AS builder
+# Stage 1: Dependencies
+FROM node:18-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
+
+# Stage 2: Builder
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# IMPORTANT: Set build-time environment variables
+# These are baked into the client-side code
+ARG NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ARG NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
 RUN npm run build
 
-# Use lightweight production image
+# Stage 3: Runner
 FROM node:18-alpine AS runner
 WORKDIR /app
-ENV NODE_ENV production
-ENV PORT 3000
 
-COPY --from=builder /app/next.config.ts ./
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Standalone mode only needs these files
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-EXPOSE 3000
+EXPOSE 8080
 
-CMD ["sh", "-c", "npm start -- -p ${PORT}"]
+CMD ["node", "server.js"]
