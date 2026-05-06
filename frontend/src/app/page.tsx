@@ -13,7 +13,8 @@ export default function Home() {
     try {
       // Mock user_id for demo
       const userId = "00000000-0000-0000-0000-000000000000";
-      const res = await fetch("http://localhost:8000/chat?user_id=" + userId, {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+      const res = await fetch(`${backendUrl}/chat?user_id=${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: query }),
