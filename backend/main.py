@@ -3,12 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import get_settings
 from .database import get_supabase
 from .agents.orchestrator import HealthAgent
-from pydantic import BaseModel
-from typing import List, Optional
+from .utils.cloud_security import RateLimitMiddleware, google_cloud_logger
+from pydantic import BaseModel, constr
 
-app = FastAPI(title="NutriAI API")
+app = FastAPI(title="Health.AMD Protocol")
 settings = get_settings()
 
+app.add_middleware(RateLimitMiddleware, limit=30, window=60)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins.split(","),
