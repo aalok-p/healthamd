@@ -1,18 +1,22 @@
+import os
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from config import get_settings
 from database import get_supabase
 from agents.orchestrator import HealthAgent
 from utils.cloud_security import RateLimitMiddleware, google_cloud_logger
 from pydantic import BaseModel, constr
 
 app = FastAPI(title="Health.AMD Protocol")
-settings = get_settings()
 
 app.add_middleware(RateLimitMiddleware, limit=30, window=60)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins.split(","),
+    allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

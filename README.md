@@ -63,10 +63,13 @@ A high-contrast, monochromatic interface built for speed and clarity.
 
 ### Backend Connectivity
 - `OXLO_API_KEY`: Intelligence endpoint access.
-- `OXLO_BASE_URL`: https://api.oxlo.ai/v1
+- `OXLO_BASE_URL`: https://api.oxlo.ai/v1 (Defaults to this if not set)
 - `OXLO_MODEL`: ministral-14b
 - `SUPABASE_URL`: PostgreSQL connection endpoint.
-- `USE_MOCK_MCP`: Set to true for local development without live Swiggy credentials.
+- `SUPABASE_SERVICE_ROLE_KEY`: Service role for DB operations.
+- `CORS_ORIGINS`: Allowed origins (comma-separated).
+
+The backend utilizes `python-dotenv` to load these values directly from your `.env` file or from the system environment (for Cloud Run).
 
 ### Frontend Connectivity
 - `NEXT_PUBLIC_BACKEND_URL`: Points to the FastAPI service (default: http://localhost:8000).

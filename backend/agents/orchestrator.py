@@ -1,18 +1,17 @@
 import json
+import os
 from openai import OpenAI
 from typing import List, Dict, Any
-from config import get_settings
 from mcp.client import MockSwiggyMCP
 from mcp.tools import tools
 
 class HealthAgent:
     def __init__(self):
-        settings = get_settings()
         self.client = OpenAI(
-            api_key=settings.oxlo_api_key,
-            base_url=settings.oxlo_base_url
+            api_key=os.getenv("OXLO_API_KEY"),
+            base_url=os.getenv("OXLO_BASE_URL", "https://api.oxlo.ai/v1")
         )
-        self.model = settings.oxlo_model
+        self.model = os.getenv("OXLO_MODEL", "ministral-14b")
         self.mcp = MockSwiggyMCP()
         self.tool_map = {
             "food_search_restaurants": self.mcp.search_restaurants,
